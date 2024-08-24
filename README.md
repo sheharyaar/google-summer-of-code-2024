@@ -1,15 +1,16 @@
 - [Google Summer of Code 2024 Report](#google-summer-of-code-2024-report)
 - [Project Overview](#project-overview)
-  - [Background](#background)
-  - [Project Status](#project-status)
-    - [xtable kernel extension](#xtable-kernel-extension)
-    - [xtable userspace extension](#xtable-userspace-extension)
-    - [netfilter kernel extension](#netfilter-kernel-extension)
-    - [conntrack](#conntrack)
-    - [netlink support](#netlink-support)
-  - [Additional Contributions](#additional-contributions)
-  - [Benchmarks](#benchmarks)
+	- [Background](#background)
+	- [Project Status](#project-status)
+		- [xtable kernel extension](#xtable-kernel-extension)
+		- [xtable userspace extension](#xtable-userspace-extension)
+		- [netfilter kernel extension](#netfilter-kernel-extension)
+		- [conntrack](#conntrack)
+		- [netlink support](#netlink-support)
+	- [Additional Contributions](#additional-contributions)
 - [Experience](#experience)
+	- [Challenges and approach](#challenges-and-approach)
+	- [Acknowledgements](#acknowledgements)
 
 
 ## Google Summer of Code 2024 Report
@@ -230,8 +231,29 @@ The additional contributions to various lunatik APIs are :
 - [fix lunatik sleep check #149](https://github.com/luainkernel/lunatik/pull/149)
 - [fix luadata setter, getter docs #150](https://github.com/luainkernel/lunatik/pull/150)
 
-### Benchmarks
-
 ## Experience
+ 
+Google Summer of Code 2024 was a great learning experience for me. It provided me a unique opportunity to explore the notoriously complex **netfilter** subsystem.
 
-/* TODO */
+### Challenges and approach
+
+- There is very **little to no official documentation** on netfilter and conntrack. The ones available are quite outdated and targeted to kernel 2.x (at the time of writing, the current stable version is 6.10.x). Browsing the kernel source code and understanding the path of the packet through netfilter (quite difficut :P) was the primary option available. There were some top quality blogs[^1][^2] that helped me understand the overall architecture and made the source code quite approachable. By the end of the program, my understanding about kernel networking and the life of a packet in the linux kernel was very much improved.
+  
+- The netfilter API changed multiple times in multiple kernel versions, so I had to browse the code for multiple kernel versions to provide support for older kernels[^3].
+
+- Understanding the **lunatik architecture**, a Lua VM working in the kernel context, was difficult for me, especially, the interaction of lunatik objects and the Lua registry. Imlementing a skeleton program for xtables and discussions on the internal implementations with my mentor helped me a lot.
+
+- For testing the implementations in VMs and different network namespaces, I got hands-on with QEMU[^4] and network namespaces[^5].
+
+
+[^1]: Blogs by Andrej Stender on [Netfilter](https://thermalcircle.de/doku.php?id=blog:linux:nftables_packet_flow_netfilter_hooks_detail), [Conntrack](https://thermalcircle.de/doku.php?id=blog:linux:connection_tracking_1_modules_and_hooks), [Flowtables](https://thermalcircle.de/doku.php?id=blog:linux:flowtables_1_a_netfilter_nftables_fastpath) and [Kernel Routing Decisions](https://thermalcircle.de/doku.php?id=blog:linux:routing_decisions_in_the_linux_kernel_1_lookup_packet_flow)
+[^2]: Arthur Chiao's Blog on [Conntrack](https://arthurchiao.art/blog/conntrack-design-and-implementation/)
+[^3]: Netfilter Madness (a gist by me - [here](https://gist.github.com/sheharyaar/008bb7527e99b09b65cef438df6a4ef7)) 
+[^4]: My QEMU notes on setting up shared-directory over virtio - [here](https://gist.github.com/sheharyaar/4a03135a77c8fe5425b856d33b82437c)
+[^5]: My notes on creating network namespaces and veth interfaces - [here](https://gist.github.com/sheharyaar/5cfaa933a8483080c9f1b2129a6135c3)
+
+### Acknowledgements
+
+I am grateful to my mentor, [Lourival](https://github.com/lneto), for guiding me throughout the project and helping me whenever I got stuck. He provided me with valuable review suggestions and helped me overcome some of my bad habits in rushing with the PRs. His approach of taking *baby steps* or what is generally known as *first principle apporach* enabled me to complete my project without getting too much anxious about the complexity of the project.
+
+I would also like to thank the LabLua Foundation for giving me this opportunity to work on such an interesting project and I look forward to contributing to the Lunatik project in the future.
